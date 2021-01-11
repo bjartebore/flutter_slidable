@@ -177,7 +177,10 @@ class SlidableDrawerActionPane extends StatelessWidget {
                   child: data.actionDelegate.build(
                     context,
                     displayIndex,
-                    data.actionsMoveAnimation,
+                    data.dismissible ? data.overallMoveAnimation : Tween<double>(
+                      begin: 0,
+                      end: data.totalActionsExtent,
+                    ).animate(data.actionsMoveAnimation),
                     SlidableRenderingMode.slide,
                   ),
                 ),

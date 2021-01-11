@@ -300,7 +300,10 @@ class SlidableData extends InheritedWidget {
       (int index) => actionDelegate.build(
         context,
         index,
-        actionsMoveAnimation,
+        dismissible ? overallMoveAnimation : CurvedAnimation(
+          parent: overallMoveAnimation,
+          curve: Interval(0.0, totalActionsExtent),
+        ),
         SlidableRenderingMode.slide,
       ),
     );
@@ -656,11 +659,28 @@ class SlidableState extends State<Slidable>
     }
   }
 
+  /// https://github.com/letsar/flutter_slidable/issues/62
   void _addScrollingNotifierListener() {
     if (widget.closeOnScroll) {
-      _scrollPosition = Scrollable.of(context)?.position;
-      if (_scrollPosition != null)
-        _scrollPosition.isScrollingNotifier.addListener(_isScrollingListener);
+
+      //recursively look for the first primary scrollable (physics == null means not primary)
+      //if no primary scrollable is found use the top found Scrollable
+      BuildContext nextContext = context;
+
+      while (true) {       
+        final nextScrollable = Scrollable.of(nextContext);
+
+        if (nextScrollable == null)
+          break;
+        
+        _scrollPosition = nextScrollable.position ?? _scrollPosition;
+
+        if (nextScrollable.widget.physics == null || nextScrollable.position == null)
+          nextContext = nextScrollable.context; //by setting this the next loop will look for a higher Scrollable
+        else
+          break;
+      }
+      _scrollPosition?.isScrollingNotifier?.addListener(_isScrollingListener);
     }
   }
 

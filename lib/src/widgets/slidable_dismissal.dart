@@ -150,7 +150,7 @@ class SlidableDrawerDismissal extends StatelessWidget {
                           (data.actionCount - index - 1),
                       extentFactor: extentAnimations[index].value,
                       child: data.actionDelegate.build(context, displayIndex,
-                          data.actionsMoveAnimation, data.renderingMode),
+                          data.overallMoveAnimation, data.renderingMode),
                     );
                   }),
                 ),
