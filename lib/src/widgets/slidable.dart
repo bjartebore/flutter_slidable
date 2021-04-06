@@ -303,7 +303,10 @@ class SlidableData extends InheritedWidget {
       (int index) => actionDelegate!.build(
         context,
         index,
-        actionsMoveAnimation,
+        dismissible ? overallMoveAnimation : CurvedAnimation(
+          parent: overallMoveAnimation,
+          curve: Interval(0, totalActionsExtent),
+        ),
         SlidableRenderingMode.slide,
       ),
     );
